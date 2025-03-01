@@ -10,7 +10,6 @@ This project predicts machine failures based on sensor data such as air temperat
 - [Dataset](#dataset)
 - [Results](#results)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Installation
 
