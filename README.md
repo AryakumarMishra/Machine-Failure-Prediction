@@ -1,7 +1,15 @@
-# Machine-Failure-Prediction
+# AI-Based Machine Failure Prediction
 
+This project uses machine learning to intelligently predict machine failures based on sensor data like temperature, rotational speed, torque, and tool wear. It aims to provide early warnings to reduce unplanned downtime and optimize maintenance schedules in industrial systems.
 
-This project predicts machine failures based on sensor data such as air temperature, machine temperature, torque, and other parameters. The goal is to predict potential failures in advance to prevent downtime and reduce maintenance costs.
+## Key Highlights
+
+- Real-world industrial problem addressed using **AI**
+- Final model: **XGBoost**, optimized with **SMOTE**, **threshold tuning**, and **feature scaling**
+- Achieved **~99% accuracy**, **94% precision**, and **83% F1-score** on test data
+- Fixed critical data leakage issue from earlier versions
+- Feature engineering + hyperparameter tuning + model explainability
+- Ready for deployment with Flask API
 
 ## Table of Contents
 - [Installation](#installation)
@@ -15,61 +23,80 @@ This project predicts machine failures based on sensor data such as air temperat
 1. Clone the repository:
    ```bash
    git clone https://github.com/AryakumarMishra/Machine-Failure-Prediction.git
-   ```
+  ```
 
 2. Navigate to the project directory:
+
    ```bash
-   cd machine-failure-prediction
+   cd Machine-Failure-Prediction
    ```
 
-3. Install the required dependencies:
+3. Install dependencies:
+
    ```bash
    pip install -r requirements.txt
    ```
 
+
 ## Usage
 
-1. Open the Jupyter notebook `Predictive_Maintenance.ipynb`.
-2. Run the cells to load the dataset, preprocess the data, and train the 1D-CNN model.
-3. To predict machine failure for a new input, use the trained model and input new sensor data.
+1. Open the Jupyter Notebook `Predictive_Maintenance.ipynb`
+2. Run all cells to:
+   * Load and preprocess the data
+   * Perform feature engineering
+   * Apply SMOTE for class imbalance
+   * Train and evaluate the XGBoost model
+   * Save the trained model
+3. Optionally, deploy via Flask API for real-time predictions
 
 ## Model
 
-This project uses a **1D Convolutional Neural Network (1D-CNN)** to predict machine failure. The model is trained on historical sensor data, which includes features like temperature, pressure, and torque, to classify whether a machine will fail or not.
+This project **originally used a 1D Convolutional Neural Network (1D-CNN)**.
+However, after discovering **data leakage** due to dependent failure mode columns (`TWF`, `HDF`, etc.), those features were dropped and the pipeline was rebuilt.
+
+Final model:
+
+* **XGBoost Classifier**
+* Tuned `scale_pos_weight` using `GridSearchCV`
+* Threshold optimized at `0.95` for best trade-off between precision and recall
+
+---
 
 ## Dataset
 
-The dataset used in this project is the **AI4I 2020 Predictive Maintenance Dataset**, which can be accessed from the following link:
+I used the [AI4I 2020 Predictive Maintenance Dataset](https://archive.ics.uci.edu/dataset/601/ai4i%2B2020%2Bpredictive%2Bmaintenance%2Bdataset) from UCI ML Repository.
 
-- [AI4I 2020 Predictive Maintenance Dataset](https://archive.ics.uci.edu/dataset/601/ai4i%2B2020%2Bpredictive%2Bmaintenance%2Bdataset)
+### Features used:
 
-### Dataset Description
+* Air temperature \[K]
+* Process temperature \[K]
+* Rotational speed \[rpm]
+* Torque \[Nm]
+* Tool wear \[min]
+* Product quality (one-hot encoded: `_L`, `_M`, `_H`)
 
-The AI4I 2020 Predictive Maintenance Dataset is a synthetic dataset that reflects real-world predictive maintenance data encountered in industrial settings. It consists of 10,000 data points with 14 features.
+### Label:
 
-#### Features:
-- **UID**: Unique identifier ranging from 1 to 10,000.
-- **Product ID**: Consists of a letter (L, M, or H) for low, medium, or high product quality variants, respectively, along with a variant-specific serial number.
-- **Air temperature [K]**: Generated using a random walk process, later normalized to a standard deviation of 2 K around 300 K.
-- **Process temperature [K]**: Generated using a random walk process, normalized to a standard deviation of 1 K, added to the air temperature plus 10 K.
-- **Rotational speed [rpm]**: Calculated from a power of 2860 W, overlaid with normally distributed noise.
-- **Torque [Nm]**: Normally distributed torque values around 40 Nm with a standard deviation of 10 Nm.
-- **Tool wear [min]**: The quality variants H/M/L add 5/3/2 minutes of tool wear to the used tool in the process.
+* `Machine failure`: Binary (0 = no failure, 1 = failure)
 
-#### Target Variable:
-- **Machine failure**: A binary variable indicating whether the machine failed (1) or not (0) based on various failure modes.
-
-### Failure Modes:
-The **machine failure** label is set to 1 when any of the following failure modes occur:
-
-- **Tool Wear Failure (TWF)**: The tool will fail at a randomly selected tool wear time between 200 and 240 minutes. The tool is replaced 69 times and fails 51 times.
-- **Heat Dissipation Failure (HDF)**: Occurs when the difference between air and process temperature is below 8.6 K and the rotational speed is below 1380 rpm.
-- **Power Failure (PWF)**: Occurs when the product of torque and rotational speed is below 3500 W or above 9000 W.
-- **Overstrain Failure (OSF)**: Occurs when the product of tool wear and torque exceeds certain limits for different product variants (L, M, H).
-- **Random Failures (RNF)**: A 0.1% chance of failure due to random factors, occurring very infrequently.
-
-At least one of these failure modes must be true for the machine failure label to be set to 1.
+---
 
 ## Results
 
-The model achieved an accuracy of **98%** on the test set, with promising results for precision, recall, and F1-score. The trained model is saved as `cnn_model_final.h5` and can be used to predict machine failure for new sensor data.
+| Metric    | Value  |
+| --------- | ------ |
+| Accuracy  | 98.95% |
+| Precision | 94.34% |
+| Recall    | 73.53% |
+| F1-Score  | 82.64% |
+| ROC-AUC   | 86.69% |
+
+These results were achieved **without any data leakage**, and can be ready for **production use**.
+
+---
+
+## Future Work
+
+* Deploy with a simple React frontend or Streamlit dashboard
+* Add LIME or SHAP for explainability
+* Modify for real-time Failure Detections and Precautions
