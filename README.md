@@ -23,7 +23,7 @@ This project uses machine learning to intelligently predict machine failures bas
 1. Clone the repository:
    ```bash
    git clone https://github.com/AryakumarMishra/Machine-Failure-Prediction.git
-  ```
+   ```
 
 2. Navigate to the project directory:
 
