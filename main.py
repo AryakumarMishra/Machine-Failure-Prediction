@@ -1,3 +1,8 @@
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+
 from data_loader import load_data, basic_eda
 from feature_engineering import encode_and_engineer
 from model_training import train_model
