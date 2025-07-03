@@ -1,4 +1,8 @@
 import streamlit as st
+
+# ✅ MUST be the first Streamlit command
+st.set_page_config(page_title="Machine Failure Predictor", layout="centered")
+
 import numpy as np
 import pandas as pd
 import joblib
@@ -21,7 +25,6 @@ explainer = get_explainer()
 THRESHOLD = 0.95
 
 # UI layout
-st.set_page_config(page_title="Machine Failure Predictor", layout="centered")
 st.title("🛠️ AI-Based Machine Failure Prediction")
 st.markdown("Enter the sensor values below to predict potential machine failure.")
 
@@ -49,7 +52,7 @@ if submit:
     power = torque * speed
     torque_per_wear = torque / (tool_wear + 1)
 
-    input_data = pd.DataFrame([[
+    input_data = pd.DataFrame([[ 
         air_temp, process_temp, speed, torque, tool_wear,
         _H, _L, _M, temp_diff, power, torque_per_wear
     ]], columns=background_data.columns)
