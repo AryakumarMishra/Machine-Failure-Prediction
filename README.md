@@ -43,7 +43,7 @@ An end-to-end machine learning project to predict industrial machine failures ba
 
    ```bash
    python -m venv .venv
-   source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+   .venv\Scripts\activate  # or source .venv/bin/activate on Mac
    ```
 
 4. Install dependencies:
